@@ -1,5 +1,7 @@
 # Realtime Chat Platform
 
+[![CI](https://github.com/Muhammed-Ozberk/realtime-chat-platform/actions/workflows/ci.yml/badge.svg)](https://github.com/Muhammed-Ozberk/realtime-chat-platform/actions/workflows/ci.yml)
+
 Express, Socket.IO ve MySQL ile geliştirilmiş, session tabanlı kimlik doğrulama kullanan gerçek zamanlı sohbet uygulaması.
 
 ## Özellikler
@@ -29,7 +31,7 @@ Express, Socket.IO ve MySQL ile geliştirilmiş, session tabanlı kimlik doğrul
 Gereksinimler: Docker Engine ve Docker Compose v2.
 
 ```bash
-git clone <repository-url> realtime-chat-platform
+git clone https://github.com/Muhammed-Ozberk/realtime-chat-platform.git
 cd realtime-chat-platform
 cp .env.example .env
 docker compose up --build
@@ -127,10 +129,6 @@ Test kapsamı şunları içerir:
 | `docker compose up --build` | MySQL ve uygulamayı kurup başlatır |
 | `docker compose logs -f app` | Uygulama loglarını izler |
 
-## Repo adı
+## Lisans
 
-`realtime-chat-platform`, projenin yalnızca bir demo arayüzü değil; Socket.IO, session güvenliği, MySQL ve katmanlı backend yapısı içeren bir platform olduğunu daha doğru anlatıyor. Paket adı ve dokümantasyon bu adla güncellendi. GitHub deposunun uzaktaki adını değiştirmek ayrı bir yönetim işlemi olduğu için repository owner tarafından yapılmalı; yeniden adlandırmadan sonra yerel remote şu şekilde güncellenebilir:
-
-```bash
-git remote set-url origin <new-repository-url>
-```
+Bu proje [MIT Lisansı](LICENSE) ile lisanslanmıştır.
