@@ -1,7 +1,5 @@
 # Realtime Chat Platform
 
-[![CI](https://github.com/Muhammed-Ozberk/realtime-chat-platform/actions/workflows/ci.yml/badge.svg)](https://github.com/Muhammed-Ozberk/realtime-chat-platform/actions/workflows/ci.yml)
-
 Express, Socket.IO ve MySQL ile geliştirilmiş, session tabanlı kimlik doğrulama kullanan gerçek zamanlı sohbet uygulaması.
 
 ## Özellikler
