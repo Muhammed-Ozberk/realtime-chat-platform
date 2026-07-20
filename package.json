@@ -1,33 +1,43 @@
 {
-  "name": "chatapp",
-  "version": "0.0.0",
+  "name": "realtime-chat-platform",
+  "version": "1.0.0",
   "private": true,
+  "description": "Session-authenticated real-time chat platform built with Express, Socket.IO and MySQL.",
+  "engines": {
+    "node": ">=22"
+  },
+  "overrides": {
+    "uuid": "^11.1.1"
+  },
   "scripts": {
     "start": "node ./bin/www",
-    "socket": "node socket.js"
+    "dev": "NODE_ENV=development node ./bin/www",
+    "test": "NODE_ENV=test node --test --test-concurrency=1",
+    "test:unit": "NODE_ENV=test node --test test/unit",
+    "test:integration": "NODE_ENV=test node --test --test-concurrency=1 test/integration",
+    "db:migrate": "sequelize-cli --config config/database.js db:migrate"
   },
   "dependencies": {
-    "bcrypt": "^5.1.0",
-    "connect-session-sequelize": "^7.1.5",
-    "cookie-parser": "~1.4.4",
-    "debug": "~2.6.9",
-    "dotenv": "^16.0.3",
-    "express": "~4.16.1",
-    "express-mysql-session": "^2.1.8",
-    "express-session": "^1.17.3",
-    "http-errors": "~1.6.3",
-    "jsonwebtoken": "^8.5.1",
-    "morgan": "~1.9.1",
-    "mysql2": "^2.3.3",
-    "passport": "^0.6.0",
+    "bcrypt": "^6.0.0",
+    "connect-session-sequelize": "^8.0.6",
+    "cookie-parser": "^1.4.7",
+    "debug": "^4.4.3",
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1",
+    "express-session": "^1.19.0",
+    "http-errors": "^2.0.1",
+    "morgan": "^1.11.0",
+    "mysql2": "^3.23.1",
+    "passport": "^0.7.0",
     "passport-local": "^1.0.0",
-    "sequelize": "^6.25.2",
-    "socket.io": "^4.5.3",
-    "twig": "~0.10.3",
-    "umzug": "^3.2.1",
-    "uuid": "^9.0.0"
+    "sequelize": "^6.37.8",
+    "socket.io": "^4.8.3",
+    "twig": "^3.0.0",
+    "umzug": "^3.8.3"
   },
   "devDependencies": {
-    "sequelize-cli": "^6.5.1"
+    "sequelize-cli": "^6.6.5",
+    "socket.io-client": "^4.8.3",
+    "supertest": "^7.2.2"
   }
 }

@@ -2,6 +2,7 @@
 const loggedIn = function (req, res, next) {
 
     if (req.isAuthenticated()) {
+        req.user = req.user || req.session.passport.user;
         return next();
     }
     else {

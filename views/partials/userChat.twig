@@ -83,7 +83,7 @@
                             <ul id="messagesList" class="list-unstyled mb-0">
                             
             {% if data.messages %} 
-                {% for row in data.messages[0] %}
+                {% for row in data.messages %}
                     {% if row.userID == data.userID %} 
                         <li class="right">
                             <div class="conversation-list">
@@ -433,10 +433,7 @@
 	<script src="/socket.io/socket.io.js"></script>
 
 	<script>
-	    const token = sessionStorage.getItem("token");
-        var socket = io({
-		    query: {token}
-	    });
+        var socket = io();
         socket.on("connect", () => {
             console.log( "connected" )
         });
@@ -609,5 +606,4 @@
         	</script>
 
 {% endblock %}
-
 

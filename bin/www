@@ -3,7 +3,7 @@
 /**
  * Module dependencies.
  */
-require('dotenv').config();
+require('dotenv').config({ quiet: true });
 global.env = process.env.env || 'development';
 var app = require('../app');
 var debug = require('debug')('chatapp:server');
@@ -14,7 +14,7 @@ var socketServer = require("../helpers/socketServer");
 
 const sequelize = require('../models').sequelize;
 
-var env = 'development';
+var env = process.env.NODE_ENV || 'development';
 var serverStarted = false;
 /**
  * Get port from environment and store in Express.
@@ -38,7 +38,7 @@ function startServer() {
     return;
   } else {
     serverStarted = true;
-    socketServer.attach(server); // Socket
+    socketServer.attach(server, app.get('sessionMiddleware'));
     server.listen(port, function () {
       console.log(`App started on ${env} and listening port ${port}`);
     });
@@ -120,6 +120,4 @@ function onListening() {
     : 'port ' + addr.port;
   debug('Listening on ' + bind);
 }
-
-
 

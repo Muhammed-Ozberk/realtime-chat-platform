@@ -1,129 +1,30 @@
-/** DB Models */
-const allModels = require("./../models");
-const { Op } = require("sequelize");
-const Rooms = allModels.Rooms;
-const sequelize = require('../models/index').sequelize;
-/** DB Models END */
+const { Op } = require('sequelize');
+const { Rooms, Messages, Users } = require('../models');
 
+module.exports = async function listChats(userID) {
+  const rooms = await Rooms.findAll({
+    where: { [Op.or]: [{ userID }, { recipientID: userID }] },
+    order: [['updatedAt', 'DESC']],
+  });
 
-module.exports = async (userID) => {
-    const whereParam = [];
-    const messageList = [];
-    try {
-        //the logged in user list of created chat rooms
-        const roomList = await Rooms.findAll({
-            attributes: [
-                'room',
-            ],
-            where: {
-                [Op.or]: [
-                    { userID: userID },
-                    { recipientID: userID }
-                ]
-            }
-        });
+  const chats = await Promise.all(rooms.map(async (room) => {
+    const otherUserID = room.userID === userID ? room.recipientID : room.userID;
+    const [otherUser, latestMessage, unreadCount] = await Promise.all([
+      Users.findOne({ where: { userID: otherUserID } }),
+      Messages.findOne({ where: { room: room.room }, order: [['id', 'DESC']] }),
+      Messages.count({ where: { room: room.room, userID: otherUserID, isRead: false } }),
+    ]);
 
-        if (roomList.length != 0) { //null error fix
+    if (!otherUser) return null;
+    return {
+      userID: otherUser.userID,
+      room: room.room,
+      username: otherUser.username,
+      userAvatar: otherUser.username.slice(0, 1).toUpperCase(),
+      lastMsg: latestMessage?.message || '',
+      messageQuantity: unreadCount,
+    };
+  }));
 
-            //Creating the query parameter required to fetch the message list
-            roomList.forEach(element => {
-                whereParam.push(`'${element.room}'`)
-            });
-
-            //Messages from chat rooms brought
-            const messages = await sequelize.query(`select * from messages where room in (${whereParam}) order by id desc`);
-
-            //User information of the brought chat rooms
-            const firstList = await sequelize.query(`select users.userID,room,username from users 
-          inner join rooms  on
-          users.userID = rooms.recipientID
-          where rooms.userID = '${userID}'`);
-
-            const secondList = await sequelize.query(`select users.userID,room,username from users 
-          inner join rooms  on
-          users.userID = rooms.userID
-          where rooms.recipientID = '${userID}'`);
-
-            //Creating the chat list by combining the messages and user information with the rooms
-            for (let index = 0; index < firstList[0].length; index++) {
-                var item = 0;
-                var message = "";
-                var data = null;
-                for (let k = 0; k < messages[0].length; k++) {
-                    if (firstList[0][index].room == messages[0][k].room) {
-                        if (messages[0][k].userID == userID && message == "") {
-                            data = {
-                                userID: firstList[0][index].userID,
-                                room: firstList[0][index].room,
-                                username: firstList[0][index].username,
-                                userAvatar: firstList[0][index].username.slice(0, 1).toUpperCase(),
-                                lastMsg: messages[0][k].message
-                            }
-                            break;
-                        } else {
-                            if (message == "") {
-                                message = messages[0][k].message;
-                            }
-                            if (messages[0][k].isRead == 0) {
-                                item++;
-                            }
-                        }
-                    }
-                }
-                if (message != "") {
-                    data = {
-                        userID: firstList[0][index].userID,
-                        room: firstList[0][index].room,
-                        username: firstList[0][index].username,
-                        userAvatar: firstList[0][index].username.slice(0, 1).toUpperCase(),
-                        lastMsg: message,
-                        messageQuantity: item
-                    }
-                }
-                messageList.push(data);
-            }
-
-            for (let index = 0; index < secondList[0].length; index++) {
-                var item = 0;
-                var message = "";
-                var data = null;
-                for (let k = 0; k < messages[0].length; k++) {
-                    if (secondList[0][index].room == messages[0][k].room) {
-                        if (messages[0][k].userID == userID && message == "") {
-                            data = {
-                                userID: secondList[0][index].userID,
-                                room: secondList[0][index].room,
-                                username: secondList[0][index].username,
-                                userAvatar: secondList[0][index].username.slice(0, 1).toUpperCase(),
-                                lastMsg: messages[0][k].message
-                            }
-                            break;
-                        } else {
-                            if (message == "") {
-                                message = messages[0][k].message;
-                            }
-                            if (messages[0][k].isRead == 0) {
-                                item++;
-                            }
-                        }
-                    }
-                }
-                if (data == null) {
-                    data = {
-                        userID: secondList[0][index].userID,
-                        room: secondList[0][index].room,
-                        username: secondList[0][index].username,
-                        userAvatar: secondList[0][index].username.slice(0, 1).toUpperCase(),
-                        lastMsg: message,
-                        messageQuantity: item
-                    }
-                }
-                messageList.push(data);
-            }
-        }
-        //Created chat list
-        return messageList;
-    } catch (error) {
-        return error;
-    }
-}
+  return chats.filter(Boolean);
+};

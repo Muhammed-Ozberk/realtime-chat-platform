@@ -1,0 +1,40 @@
+services:
+  mysql:
+    image: mysql:8.4
+    environment:
+      MYSQL_DATABASE: ${DB_NAME:-realtime_chat}
+      MYSQL_USER: ${DB_USER:-chat}
+      MYSQL_PASSWORD: ${DB_PASSWORD:-chat_password}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-root_password}
+    ports:
+      - "${MYSQL_PORT:-3306}:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h 127.0.0.1 -u$$MYSQL_USER -p$$MYSQL_PASSWORD --silent"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+      start_period: 20s
+
+  app:
+    build: .
+    environment:
+      NODE_ENV: production
+      PORT: 8080
+      DB_HOST: mysql
+      DB_PORT: 3306
+      DB_NAME: ${DB_NAME:-realtime_chat}
+      DB_USER: ${DB_USER:-chat}
+      DB_PASSWORD: ${DB_PASSWORD:-chat_password}
+      SESSION_SECRET: ${SESSION_SECRET:-local-compose-secret-change-me}
+      COOKIE_SECURE: "false"
+    ports:
+      - "${APP_PORT:-8080}:8080"
+    depends_on:
+      mysql:
+        condition: service_healthy
+    restart: unless-stopped
+
+volumes:
+  mysql_data:

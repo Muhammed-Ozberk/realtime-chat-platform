@@ -37,7 +37,17 @@ Object.keys(db).forEach(modelName => {
 var migrate = function () {
   return new Promise((resolve, reject) => {
     const umzug = new Umzug({
-      migrations: { glob: 'migrations/*.js' },
+      migrations: {
+        glob: 'migrations/*.js',
+        resolve: ({ name, path: migrationPath, context }) => {
+          const migration = require(migrationPath);
+          return {
+            name,
+            up: () => migration.up(context, Sequelize),
+            down: () => migration.down(context, Sequelize),
+          };
+        },
+      },
       context: sequelize.getQueryInterface(),
       storage: new SequelizeStorage({ sequelize }),
       logger: console,

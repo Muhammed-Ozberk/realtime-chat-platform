@@ -11,6 +11,10 @@ module.exports = (sequelize, DataTypes) => {
             username: DataTypes.STRING,
             email: DataTypes.STRING,
             password: DataTypes.STRING,
+            themeMode: {
+                type: DataTypes.STRING,
+                defaultValue: 'light'
+            },
             createdAt: DataTypes.DATE,
             updatedAt: DataTypes.DATE
         }
@@ -18,4 +22,3 @@ module.exports = (sequelize, DataTypes) => {
 
     return Users;
 };
-

@@ -76,11 +76,7 @@
 	<script src="/socket.io/socket.io.js"></script>
 
 	<script>
-	sessionStorage.setItem("token", "{{data.token}}");
-	const token = sessionStorage.getItem("token");
-    var socket = io({
-		query: {token}
-	});
+    var socket = io();
     socket.on("connect", () => {
         console.log( "connected" );
     });
@@ -126,6 +122,5 @@
 {% endblock %}
 
 {% endif %}
-
 
 

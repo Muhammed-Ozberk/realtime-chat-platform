@@ -10,6 +10,10 @@ module.exports = (sequelize, DataTypes) => {
             room: DataTypes.STRING,
             userID: DataTypes.STRING,
             message: DataTypes.STRING,
+            isRead: {
+                type: DataTypes.BOOLEAN,
+                defaultValue: false
+            },
             createdAt: DataTypes.DATE,
             updatedAt: DataTypes.DATE
         }
